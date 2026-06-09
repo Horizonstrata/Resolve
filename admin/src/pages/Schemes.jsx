@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
-export default function Schemes() {
-  const [schemes, setSchemes] = useState([])
+export default function Properties() {
+  const [properties, setProperties] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ name: '', address: '' })
@@ -11,8 +11,8 @@ export default function Schemes() {
 
   async function load() {
     setLoading(true)
-    const { data } = await supabase.from('schemes').select('*').order('created_at', { ascending: false })
-    setSchemes(data || [])
+    const { data } = await supabase.from('properties').select('*').order('created_at', { ascending: false })
+    setProperties(data || [])
     setLoading(false)
   }
 
@@ -22,22 +22,22 @@ export default function Schemes() {
     e.preventDefault()
     setSaving(true)
     setError(null)
-    const { error } = await supabase.from('schemes').insert({ name: form.name, address: form.address })
+    const { error } = await supabase.from('properties').insert({ name: form.name, address: form.address })
     if (error) setError(error.message)
     else { setShowForm(false); setForm({ name: '', address: '' }); load() }
     setSaving(false)
   }
 
-  async function toggleActive(scheme) {
-    await supabase.from('schemes').update({ is_active: !scheme.is_active }).eq('id', scheme.id)
+  async function toggleActive(property) {
+    await supabase.from('properties').update({ is_active: !property.is_active }).eq('id', property.id)
     load()
   }
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2 style={{ margin: 0 }}>Schemes</h2>
-        <button onClick={() => setShowForm(!showForm)} style={btnStyle}>+ New scheme</button>
+        <h2 style={{ margin: 0 }}>Properties</h2>
+        <button onClick={() => setShowForm(!showForm)} style={btnStyle}>+ New property</button>
       </div>
 
       {showForm && (
@@ -71,23 +71,23 @@ export default function Schemes() {
             </tr>
           </thead>
           <tbody>
-            {schemes.map(s => (
-              <tr key={s.id}>
-                <td style={tdStyle}>{s.name}</td>
-                <td style={tdStyle}>{s.address || '—'}</td>
+            {properties.map(p => (
+              <tr key={p.id}>
+                <td style={tdStyle}>{p.name}</td>
+                <td style={tdStyle}>{p.address || '—'}</td>
                 <td style={tdStyle}>
-                  <span style={{ background: s.is_active ? '#c6f6d5' : '#fed7d7', color: s.is_active ? '#276749' : '#9b2c2c', padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.8rem' }}>
-                    {s.is_active ? 'Active' : 'Inactive'}
+                  <span style={{ background: p.is_active ? '#c6f6d5' : '#fed7d7', color: p.is_active ? '#276749' : '#9b2c2c', padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.8rem' }}>
+                    {p.is_active ? 'Active' : 'Inactive'}
                   </span>
                 </td>
                 <td style={tdStyle}>
-                  <button onClick={() => toggleActive(s)} style={btnSmall}>
-                    {s.is_active ? 'Deactivate' : 'Activate'}
+                  <button onClick={() => toggleActive(p)} style={btnSmall}>
+                    {p.is_active ? 'Deactivate' : 'Activate'}
                   </button>
                 </td>
               </tr>
             ))}
-            {schemes.length === 0 && <tr><td colSpan={4} style={{ ...tdStyle, color: '#999' }}>No schemes yet</td></tr>}
+            {properties.length === 0 && <tr><td colSpan={4} style={{ ...tdStyle, color: '#999' }}>No properties yet</td></tr>}
           </tbody>
         </table>
       )}

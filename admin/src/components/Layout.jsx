@@ -2,7 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 const navItems = [
-  { to: '/schemes',  label: 'Schemes' },
+  { to: '/schemes',  label: 'Properties' },
   { to: '/users',    label: 'Users' },
   { to: '/motions',  label: 'Motions' },
 ]

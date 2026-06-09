@@ -7,7 +7,7 @@ export default function Motions() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [selected, setSelected] = useState(null)
-  const [form, setForm] = useState({ title: '', description: '', scheme_id: '', opens_at: '', closes_at: '' })
+  const [form, setForm] = useState({ title: '', description: '', property_id: '', opens_at: '', closes_at: '' })
   const [outcomeForm, setOutcomeForm] = useState({ outcome: '', action_taken: '' })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
@@ -15,8 +15,8 @@ export default function Motions() {
   async function load() {
     setLoading(true)
     const [{ data: m }, { data: s }] = await Promise.all([
-      supabase.from('motions').select('*, schemes(name), users(full_name), motion_outcomes(*), votes(vote)').order('created_at', { ascending: false }),
-      supabase.from('schemes').select('id, name').eq('is_active', true).order('name')
+      supabase.from('motions').select('*, properties(name), users(full_name), motion_outcomes(*), votes(vote)').order('created_at', { ascending: false }),
+      supabase.from('properties').select('id, name').eq('is_active', true).order('name')
     ])
     setMotions(m || [])
     setSchemes(s || [])
@@ -33,14 +33,14 @@ export default function Motions() {
     const { error } = await supabase.from('motions').insert({
       title: form.title,
       description: form.description,
-      scheme_id: form.scheme_id,
+      property_id: form.property_id,
       opens_at: form.opens_at || null,
       closes_at: form.closes_at || null,
       created_by: user.id,
       status: 'draft'
     })
     if (error) setError(error.message)
-    else { setShowForm(false); setForm({ title: '', description: '', scheme_id: '', opens_at: '', closes_at: '' }); load() }
+    else { setShowForm(false); setForm({ title: '', description: '', property_id: '', opens_at: '', closes_at: '' }); load() }
     setSaving(false)
   }
 
@@ -93,7 +93,7 @@ export default function Motions() {
             </div>
             <div>
               <label style={labelStyle}>Scheme</label>
-              <select value={form.scheme_id} onChange={e => setForm({ ...form, scheme_id: e.target.value })} required style={inputStyle}>
+              <select value={form.property_id} onChange={e => setForm({ ...form, property_id: e.target.value })} required style={inputStyle}>
                 <option value="">— Select scheme —</option>
                 {schemes.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>

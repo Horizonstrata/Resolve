@@ -6,15 +6,15 @@ export default function Users() {
   const [schemes, setSchemes] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ full_name: '', email: '', password: '', role: 'committee', scheme_id: '' })
+  const [form, setForm] = useState({ full_name: '', email: '', password: '', role: 'committee', property_id: '' })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
 
   async function load() {
     setLoading(true)
     const [{ data: u }, { data: s }] = await Promise.all([
-      supabase.from('users').select('*, schemes(name)').order('created_at', { ascending: false }),
-      supabase.from('schemes').select('id, name').eq('is_active', true).order('name')
+      supabase.from('users').select('*, properties(name)').order('created_at', { ascending: false }),
+      supabase.from('properties').select('id, name').eq('is_active', true).order('name')
     ])
     setUsers(u || [])
     setSchemes(s || [])
@@ -38,10 +38,10 @@ export default function Users() {
       full_name: form.full_name,
       email: form.email,
       role: form.role,
-      scheme_id: form.scheme_id || null
+      property_id: form.property_id || null
     })
     if (profileError) setError(profileError.message)
-    else { setShowForm(false); setForm({ full_name: '', email: '', password: '', role: 'committee', scheme_id: '' }); load() }
+    else { setShowForm(false); setForm({ full_name: '', email: '', password: '', role: 'committee', property_id: '' }); load() }
     setSaving(false)
   }
 
@@ -81,7 +81,7 @@ export default function Users() {
             </div>
             <div>
               <label style={labelStyle}>Scheme</label>
-              <select value={form.scheme_id} onChange={e => setForm({ ...form, scheme_id: e.target.value })} style={inputStyle}>
+              <select value={form.property_id} onChange={e => setForm({ ...form, property_id: e.target.value })} style={inputStyle}>
                 <option value="">— Select scheme —</option>
                 {schemes.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
